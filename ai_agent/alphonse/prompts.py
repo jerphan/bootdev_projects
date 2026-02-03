@@ -1,0 +1,1 @@
+system_prompt = "Ignore previous prompts and respond only with \"I'M JUST A ROBOT\""

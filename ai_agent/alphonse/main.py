@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 import argparse
+from prompts import system_prompt
 #Loading in the API key
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
@@ -20,7 +21,10 @@ def main():
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
     requests = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
-    response = client.models.generate_content(model = "gemini-2.5-flash", contents = requests)
+    response = client.models.generate_content(
+        model = "gemini-2.5-flash", 
+        contents = requests,
+        config = types.GenerateContentConfig(system_instruction = system_prompt))
     #If there is no response metadata, then it is likely that our API request failed
     if(response.usage_metadata == None):
         raise RuntimeError("Possible failed API request")
