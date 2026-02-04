@@ -4,6 +4,7 @@ from google import genai
 from google.genai import types
 import argparse
 from prompts import system_prompt
+from functions.call_function import available_functions
 #Loading in the API key
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
@@ -20,21 +21,26 @@ def main():
     parser.add_argument("user_prompt", type=str, help="User prompt")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
+    #We then generate the content from an API call to Gemini
     requests = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
     response = client.models.generate_content(
         model = "gemini-2.5-flash", 
         contents = requests,
-        config = types.GenerateContentConfig(system_instruction = system_prompt))
+        config = types.GenerateContentConfig(system_instruction = system_prompt, tools = [available_functions]))
     #If there is no response metadata, then it is likely that our API request failed
     if(response.usage_metadata == None):
         raise RuntimeError("Possible failed API request")
     #We then print the meta data to keep track of how many tokens we have used, as well as the response, if the verbose flag is enabled
+    funtion_call_list = response.function_calls
     if(args.verbose):
         prompt_token = response.usage_metadata.prompt_token_count
         candidate_token = response.usage_metadata.candidates_token_count
         print(f"User prompt: {args.user_prompt}\nPrompt tokens: {prompt_token}\nResponse tokens: {candidate_token}\nResponse:\n{response.text}")
     else:
         print(f"{response.text}")
+    if not(funtion_call_list == None):
+        for function_call in funtion_call_list:
+            print(f"Calling function: {function_call.name}({function_call.args})")
 #We then call the main function to run
 if __name__ == "__main__":
     main()

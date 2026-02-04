@@ -2,6 +2,20 @@ import os
 
 MAX_CHAR_TO_READ = 10000
 
+schema_get_file_content = types.FunctionDeclaration(
+    name="get_file_content",
+    description=f"Reads the content in the file, up to a maximum of {MAX_CHAR_TO_READ} characters",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "content": types.Schema(
+                type=types.Type.STRING,
+                description="Returns the content in string form, found in the file path relative to the working directory, if the file at the path is a regular file",
+            ),
+        },
+    ),
+)
+
 def get_file_content(working_directory, file_path):
     abs_path = os.path.abspath(working_directory)
     full_path = os.path.normpath(os.path.join(abs_path, file_path))
