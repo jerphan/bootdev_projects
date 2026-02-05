@@ -1,4 +1,6 @@
 import os
+from google import genai
+from google.genai import types
 
 MAX_CHAR_TO_READ = 10000
 
@@ -8,11 +10,12 @@ schema_get_file_content = types.FunctionDeclaration(
     parameters=types.Schema(
         type=types.Type.OBJECT,
         properties={
-            "content": types.Schema(
+            "file_path": types.Schema(
                 type=types.Type.STRING,
-                description="Returns the content in string form, found in the file path relative to the working directory, if the file at the path is a regular file",
+                description= f"Relative to the working directory, file_path specifies the path to the file read from up to a maximum of {MAX_CHAR_TO_READ} characters",
             ),
         },
+        required = ["file_path"],
     ),
 )
 

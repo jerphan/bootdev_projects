@@ -4,7 +4,7 @@ from google import genai
 from google.genai import types
 import argparse
 from prompts import system_prompt
-from functions.call_function import available_functions
+from functions.call_function import available_functions, call_function
 #Loading in the API key
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
@@ -13,7 +13,7 @@ if(api_key == None):
     raise RuntimeError("API key not found")
 #Defining the gemini client we will use with our API key
 client = genai.Client(api_key=api_key)
-    
+
 
 def main():
     #This is to handle command line arguments
@@ -31,16 +31,25 @@ def main():
     if(response.usage_metadata == None):
         raise RuntimeError("Possible failed API request")
     #We then print the meta data to keep track of how many tokens we have used, as well as the response, if the verbose flag is enabled
-    funtion_call_list = response.function_calls
+    function_call_list = response.function_calls
     if(args.verbose):
         prompt_token = response.usage_metadata.prompt_token_count
         candidate_token = response.usage_metadata.candidates_token_count
         print(f"User prompt: {args.user_prompt}\nPrompt tokens: {prompt_token}\nResponse tokens: {candidate_token}\nResponse:\n{response.text}")
     else:
         print(f"{response.text}")
-    if not(funtion_call_list == None):
-        for function_call in funtion_call_list:
-            print(f"Calling function: {function_call.name}({function_call.args})")
+    function_results = []
+    for function_call in function_call_list:
+        result = call_function(function_call, args.verbose)
+        if (
+            not result.parts
+            or not result.parts[0].function_response
+            or not result.parts[0].function_response.response
+        ):
+            raise RuntimeError(f"Empty function response for {function_call.name}")
+        if verbose:
+            print(f"-> {result.parts[0].function_response.response}")
+        function_results.append(result.parts[0])
 #We then call the main function to run
 if __name__ == "__main__":
     main()
