@@ -2,7 +2,7 @@ import os
 from google import genai
 from google.genai import types
 
-#Building a schema for  get_files_info function
+#Building a schema for  get_files_info function to let the model know how it should be called
 schema_get_files_info = types.FunctionDeclaration(
     name="get_files_info",
     description="Lists files in a specified directory relative to the working directory, providing file size and directory status",
@@ -16,7 +16,7 @@ schema_get_files_info = types.FunctionDeclaration(
         },
     ),
 )
-
+#Returns the size of a directory in bytes by recursively going through the files in the directory
 def get_size_path(path_to_check):
     if os.path.isfile(path_to_check):
         return os.path.getsize(path_to_check)
@@ -25,7 +25,8 @@ def get_size_path(path_to_check):
         full_entry = os.path.join(path_to_check, entry)
         size += get_size_path(full_entry)
     return size
-
+#Returns a formatted string to describe the target directory including the size of the files in the directory in bytes, and if the items
+#Found in the directory are also directories or not
 def get_files_info(working_directory, directory="."):
     abs_path = os.path.abspath(working_directory)
     full_path = os.path.normpath(os.path.join(abs_path, directory))

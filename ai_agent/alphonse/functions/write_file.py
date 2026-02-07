@@ -2,6 +2,7 @@ import os
 from google import genai
 from google.genai import types
 
+#Building a schema for write file function to let the model know how it should be called
 schema_write_file = types.FunctionDeclaration(
     name="write_file",
     description="Writes the user specified content a file in the specified path from the working directory",

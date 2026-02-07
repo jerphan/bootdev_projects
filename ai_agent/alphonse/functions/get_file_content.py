@@ -1,9 +1,9 @@
 import os
 from google import genai
 from google.genai import types
+from functions.config import MAX_CHAR_TO_READ
 
-MAX_CHAR_TO_READ = 10000
-
+#Building the schema to describe to the model how the get file content function should be called
 schema_get_file_content = types.FunctionDeclaration(
     name="get_file_content",
     description=f"Reads the content in the file, up to a maximum of {MAX_CHAR_TO_READ} characters",
