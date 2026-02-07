@@ -1,0 +1,1 @@
+This project is an asteroid game that uses object oriented programming and pygame. The player is able to move using the WASD keys, shoot with the spacebar key, and will end the game once they hit the an asteroid. Asteroids will randomly spawn in, and split based on their size, or disappear if they are too small to split.
