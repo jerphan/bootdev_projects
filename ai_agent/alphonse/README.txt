@@ -1,0 +1,1 @@
+This project is a mini AI agent tool that is meant to be able to make API calls to the Gemini 2.5 flash model to debug code or review code, based off of a defined working directory. It is able to read file content, retrieve file information, run python files, and write to files.
